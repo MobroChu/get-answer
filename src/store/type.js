@@ -1,0 +1,3 @@
+export const ADD_ITEMNUM = 'ADD_ITEMNUM'
+export const REMBER_ANSWER = 'REMBER_ANSWER'
+export const INITIAL_DATA = 'INITIAL_DATA'
