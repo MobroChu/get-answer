@@ -8,10 +8,11 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: '/home',
       component: App,
       children: [
         {
-          path: '/',
+          path: '/home',
           component: r => require.ensure([], () => r(require('../pages/home')), 'home')
         },
         {

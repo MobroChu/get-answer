@@ -1,6 +1,6 @@
 export default {
-  addNum ({state, commit}, id) {
-    commit('REMBER_ANSWER', id)
+  addNum ({state, commit}, option) {
+    commit('REMBER_ANSWER', option)
     if (state.itemNum < state.itemDetail.length) {
       commit('ADD_ITEMNUM', 1)
     }

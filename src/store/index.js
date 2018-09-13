@@ -42,8 +42,8 @@ const state = {
       {
         'topic_answer_id': 4,
         'topic_id': 20,
-        'answer_name': '答案dddd',
-        'is_standard_answer': 0
+        'answer_name': '也是正确答案',
+        'is_standard_answer': 1
       }]
     },
     {
@@ -191,8 +191,25 @@ const state = {
   rightAnswerid: [] // 标准答案
 }
 
+const getters = {
+  rightAnswerid: (state, getterParams) => {
+    // 找出标准答案
+    let rightAnswerid = state.itemDetail.map((detail, index) => {
+      let rightAnswer = []
+      detail.topic_answer.forEach((ans, ansIndex) => {
+        if (ans.is_standard_answer) {
+          rightAnswer.push(ans.topic_answer_id)
+        }
+      })
+      return rightAnswer
+    })
+    return rightAnswerid
+  }
+}
+
 export default new Vuex.Store({
   state,
   actions,
-  mutations
+  mutations,
+  getters
 })
