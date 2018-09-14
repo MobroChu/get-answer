@@ -20,8 +20,6 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
-## change log
-2018-09-13:
-  -feature: 完成基本功能 - 单选题；有两个 app 这个id，返回后背景图片没有换
-2018-09-14:
-  -feature: 升级成多选题
+## 题外话
+鄙人才浅，代码有许多不合理之处。若有热心人愿意赐教在下，欢迎 pr。  
+开发分支： beta
