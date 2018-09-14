@@ -11,11 +11,11 @@
       </div>
       <div class="item-container item-container-item" v-if="fatherComponent === 'item'">
         <dl>
-          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p></dt>
+          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p><span v-if="multiSelect">（多选）</span></dt>
           <dd v-for="(item, index) in itemDetail[itemNum-1].topic_answer"
             :key="index"
             @click="choosed(item.topic_answer_id, index)"
-            :class="{ 'active': choosedNum === index }"
+            :class="transformActiveArr(activeArr[index])"
           >
             <span>{{numToUpperCase(index)}}</span>
             <p>{{item.answer_name}}</p>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'itemContainer',
@@ -39,33 +39,39 @@ export default {
       required: true
     }
   },
-  computed: mapState([
-    'itemNum',
-    'level',
-    'itemDetail',
-    'answerid'
-  ]),
+  computed: {
+    ...mapState([
+      'itemNum',
+      'level',
+      'itemDetail',
+      'answerid'
+    ]),
+    ...mapGetters([
+      'rightAnswerid'
+    ])
+  },
   data () {
     return {
+      multiSelect: false, // 是否多选
+      activeArr: [], // 选中的选项
       itemId: null, // 题目ID
-      choosedNum: null, // 选中答案索引
-      choosedId: null // 选中答案id
+      choosedOption: [] // 选中答案
     }
   },
   created () {
     this.initialData()
   },
   mounted () {
-    // console.log(this.answerid, '------')
+    this.addActive()
+    this.isMultiSelect()
   },
-  beforeUpdate () {
-
+  updated () {
+    // console.log(this.multiSelect, '--------------', this.rightAnswerid)
   },
   methods: {
     ...mapActions([
       'addNum',
-      'initialData',
-      'rightAnswerid'
+      'initialData'
     ]),
     numToUpperCase (type) {
       switch (type) {
@@ -81,17 +87,54 @@ export default {
     },
     // 设置选中
     choosed (answerId, index) {
-      this.choosedNum = index
-      this.choosedId = answerId
+      if (this.multiSelect) {
+        this.activeArr.splice(index, 1, !this.transformActiveArr(this.activeArr[index]))
+      } else {
+        this.activeArr = this.activeArr.map((active, i) => i === index)
+      }
+      let choosedOption = this.choosedOption
+      this.activeArr.forEach((active, i) => {
+        if (active) {
+          choosedOption.splice(index, 1, {index, answerId})
+        } else {
+          choosedOption.splice(i, 1, {index: -1, answerId: -1})
+        }
+      })
+      this.choosedOption = choosedOption
     },
+    // 下一题
     handleNext (submit) {
       // this.$store.commit('REMBER_ANSWER', this.choosedId)
-      if (this.choosedNum !== null) {
-        this.choosedNum = null
-        this.addNum(this.choosedId)
+      if (this.choosedOption.some(choosed => choosed.index > -1)) {
+        this.addNum(this.choosedOption)
+        this.addActive()
+        this.isMultiSelect()
         if (submit) this.$router.push('score')
       } else {
         alert('你还没有选择答案')
+      }
+    },
+    // 判断是否是多选
+    isMultiSelect () {
+      let multiSelect = false
+      if (this.rightAnswerid[this.itemNum - 1].rightAnswer.length > 1) {
+        multiSelect = true
+      }
+      this.multiSelect = multiSelect
+    },
+    // 为答案选项添加类名标识
+    addActive () {
+      this.activeArr = this.itemDetail[this.itemNum - 1].topic_answer.map(item => false)
+      this.choosedOption = this.itemDetail[this.itemNum - 1].topic_answer.map(() => ({index: -1, answerId: -1}))
+    },
+    // 类名 与 标识 的转换 'active' <==> true
+    transformActiveArr (type) {
+      switch (type) {
+        case true: return 'active'
+        case false: return ''
+        case 'active': return true
+        case '': return false
+        default: return false
       }
     }
   }
@@ -100,7 +143,6 @@ export default {
 
 <style lang="stylus" scoped>
 section
-  background url('../images/1-1.jpg')
   .top_tips
     background url('../images/WechatIMG2.png') no-repeat
     position absolute
