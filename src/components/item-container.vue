@@ -11,7 +11,7 @@
       </div>
       <div class="item-container item-container-item" v-if="fatherComponent === 'item'">
         <dl>
-          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p><span v-if="isMultiSelect">（多选）</span></dt>
+          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p><span v-if="multiSelect">（多选）</span></dt>
           <dd v-for="(item, index) in itemDetail[itemNum-1].topic_answer"
             :key="index"
             @click="choosed(item.topic_answer_id, index)"
@@ -52,23 +52,21 @@ export default {
   },
   data () {
     return {
-      // multiSelect: this.rightAnswerid[this.itemNum - 1], // 是否多选
+      multiSelect: false, // 是否多选
       activeArr: [], // 选中的选项
       itemId: null, // 题目ID
-      choosedOption: null // 选中答案
+      choosedOption: [] // 选中答案
     }
   },
   created () {
     this.initialData()
   },
   mounted () {
-    // this.multiSelect = this.isMultiSelect()
-    this.activeArr = this.addActive()
+    this.addActive()
+    this.isMultiSelect()
   },
   updated () {
-    console.log(this.multiSelect, '--------------', this.rightAnswerid[this.itemNum - 1])
-    // this.multiSelect = this.isMultiSelect()
-    // this.activeArr = this.addActive()
+    // console.log(this.multiSelect, '--------------', this.rightAnswerid)
   },
   methods: {
     ...mapActions([
@@ -89,13 +87,17 @@ export default {
     },
     // 设置选中
     choosed (answerId, index) {
-      this.activeArr.splice(index, 1, !this.transformActiveArr(this.activeArr[index]))
-      let choosedOption = []
-      this.activeArr.forEach((active, index) => {
+      if (this.multiSelect) {
+        this.activeArr.splice(index, 1, !this.transformActiveArr(this.activeArr[index]))
+      } else {
+        this.activeArr = this.activeArr.map((active, i) => i === index)
+      }
+      let choosedOption = this.choosedOption
+      this.activeArr.forEach((active, i) => {
         if (active) {
-          choosedOption.push({index, answerId})
+          choosedOption.splice(index, 1, {index, answerId})
         } else {
-          choosedOption.push({index: -1, answerId: -1})
+          choosedOption.splice(i, 1, {index: -1, answerId: -1})
         }
       })
       this.choosedOption = choosedOption
@@ -103,12 +105,10 @@ export default {
     // 下一题
     handleNext (submit) {
       // this.$store.commit('REMBER_ANSWER', this.choosedId)
-      console.log(this.answerid, '9999999999999')
-      if (this.choosedOption !== null) {
+      if (this.choosedOption.some(choosed => choosed.index > -1)) {
         this.addNum(this.choosedOption)
-        this.activeArr = this.addActive()
-        this.choosedOption = null
-        this.multiSelect = this.isMultiSelect()
+        this.addActive()
+        this.isMultiSelect()
         if (submit) this.$router.push('score')
       } else {
         alert('你还没有选择答案')
@@ -117,14 +117,15 @@ export default {
     // 判断是否是多选
     isMultiSelect () {
       let multiSelect = false
-      if (this.rightAnswerid[this.itemNum - 1].length > 1) {
+      if (this.rightAnswerid[this.itemNum - 1].rightAnswer.length > 1) {
         multiSelect = true
       }
-      return multiSelect
+      this.multiSelect = multiSelect
     },
     // 为答案选项添加类名标识
     addActive () {
-      return this.itemDetail[this.itemNum - 1].topic_answer.map(item => false)
+      this.activeArr = this.itemDetail[this.itemNum - 1].topic_answer.map(item => false)
+      this.choosedOption = this.itemDetail[this.itemNum - 1].topic_answer.map(() => ({index: -1, answerId: -1}))
     },
     // 类名 与 标识 的转换 'active' <==> true
     transformActiveArr (type) {
@@ -142,7 +143,6 @@ export default {
 
 <style lang="stylus" scoped>
 section
-  background url('../images/1-1.jpg')
   .top_tips
     background url('../images/WechatIMG2.png') no-repeat
     position absolute

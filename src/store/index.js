@@ -24,8 +24,8 @@ const state = {
       'topic_answer': [{
         'topic_answer_id': 1,
         'topic_id': 20,
-        'answer_name': '答案aaaa',
-        'is_standard_answer': 0
+        'answer_name': '还是正确答案',
+        'is_standard_answer': 1
       },
       {
         'topic_answer_id': 2,
@@ -100,8 +100,8 @@ const state = {
       {
         'topic_answer_id': 10,
         'topic_id': 21,
-        'answer_name': 'BBBBBB',
-        'is_standard_answer': 0
+        'answer_name': '正确答案BBBBBB',
+        'is_standard_answer': 1
       },
       {
         'topic_answer_id': 11,
@@ -201,7 +201,7 @@ const getters = {
           rightAnswer.push(ans.topic_answer_id)
         }
       })
-      return rightAnswer
+      return {rightAnswer, singleScore: 20}
     })
     return rightAnswerid
   }

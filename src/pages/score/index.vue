@@ -10,13 +10,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'score',
   data () {
     return {
       scores: 0,
-      rightAnswer: [],
       tipsTxt: [
         '你说，是不是把知识都还给小学老师了？',
         '还不错，但还需要继续加油哦！',
@@ -24,21 +23,45 @@ export default {
         '智商离爆表只差一步了！',
         '你也太聪明啦，葡萄之家欢迎你！'
       ],
-      sharePage: false
+      sharePage: false,
+      totalScores: 0 // 试卷总分
     }
   },
-  computed: mapState([
-    'answerid',
-    'itemDetail'
-  ]),
+  computed: {
+    ...mapState([
+      'answerid',
+      'itemDetail'
+    ]),
+    ...mapGetters([
+      'rightAnswerid'
+    ])
+  },
   methods: {
     caclScores () {
       let score = this.scores
+      let totalScores = this.totalScores
       this.answerid.map((answer, index) => {
-        this.rightAnswer[index].forEach(singleAnswer => {
-          score += (singleAnswer === answer ? 20 : 0)
+        let rightAnswerid = this.rightAnswerid[index].rightAnswer // 标准答案
+        let singleScore = this.rightAnswerid[index].singleScore // 当前题目的分数
+        totalScores += singleScore
+        // 将用户选择的答案格式化
+        let answerContain = []
+        answer.forEach(element => {
+          if (element.index > -1) {
+            answerContain.push(element.answerId)
+          }
         })
+        switch (this.isAContainB(answerContain, rightAnswerid)) {
+          default:
+          case 0: score += 0
+            break
+          case 1: score += singleScore / 2
+            break
+          case 2: score += singleScore
+            break
+        }
       })
+      this.totalScores = totalScores
       return score
     },
     getRightAnswer () {
@@ -51,24 +74,29 @@ export default {
       })
     },
     getTipsTxt () {
-      if (this.scores < 20) {
-        return this.tipsTxt[0]
-      } else if (this.scores < 40) {
-        return this.tipsTxt[1]
-      } else if (this.scores < 60) {
-        return this.tipsTxt[2]
-      } else if (this.scores < 80) {
-        return this.tipsTxt[3]
-      } else if (this.scores <= 100) {
-        return this.tipsTxt[4]
-      }
+      let len = this.tipsTxt.length
+      let index = Math.floor(this.scores / (this.totalScores / len))
+      index = index === len ? len - 1 : index
+      return this.tipsTxt[index]
     },
     share () {
       this.sharePage = true
+    },
+    // 用户答案 a 是否包含在标准答案 b 内
+    isAContainB (a, b) {
+      if (a.length > b.length) {
+        return 0
+      } else if (a.length === b.length) {
+        return (JSON.stringify(a) === JSON.stringify(b)) ? 2 : 0
+      } else if (a.length < b.length) {
+        let aa = a.every(item => {
+          return b.some(bb => bb === item)
+        })
+        return aa ? 1 : 0
+      }
     }
   },
   mounted () {
-    this.rightAnswer = this.getRightAnswer()
     this.scores = this.caclScores()
   }
 }
