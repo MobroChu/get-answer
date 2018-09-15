@@ -5,7 +5,7 @@
       <p class="txt">{{getTipsTxt()}}</p>
     </div>
     <div class="share" @click="share"></div>
-    <div class="share-page" v-if="sharePage"></div>
+    <div class="share-page" @click="sharePage = !sharePage" v-if="sharePage"></div>
   </div>
 </template>
 
@@ -76,7 +76,7 @@ export default {
     getTipsTxt () {
       let len = this.tipsTxt.length
       let index = Math.floor(this.scores / (this.totalScores / len))
-      index = index === len ? len - 1 : index
+      index = index === len ? len - 1 : isNaN(index) ? 0 : index
       return this.tipsTxt[index]
     },
     share () {
@@ -105,7 +105,7 @@ export default {
 <style lang="stylus">
 body
   background url('../../images/4-1.jpg') no-repeat
-  background-size contain
+  background-size 100% 100%
 .score
   background url('../../images/4-2.png') no-repeat center 1rem
   background-size 9.7rem 9.1rem

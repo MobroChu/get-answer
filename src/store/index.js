@@ -21,6 +21,7 @@ const state = {
       'active_topic_phase': '第一周',
       'active_start_time': '1479139200',
       'active_end_time': '1482163200',
+      'single_score': 20,
       'topic_answer': [{
         'topic_answer_id': 1,
         'topic_id': 20,
@@ -56,6 +57,7 @@ const state = {
       'active_topic_phase': '第一周',
       'active_start_time': '1479139200',
       'active_end_time': '1482163200',
+      'single_score': 10,
       'topic_answer': [{
         'topic_answer_id': 5,
         'topic_id': 21,
@@ -91,6 +93,7 @@ const state = {
       'active_topic_phase': '第一周',
       'active_start_time': '1479139200',
       'active_end_time': '1482163200',
+      'single_score': 20,
       'topic_answer': [{
         'topic_answer_id': 9,
         'topic_id': 21,
@@ -126,6 +129,7 @@ const state = {
       'active_topic_phase': '第一周',
       'active_start_time': '1479139200',
       'active_end_time': '1482163200',
+      'single_score': 10,
       'topic_answer': [{
         'topic_answer_id': 13,
         'topic_id': 21,
@@ -161,6 +165,7 @@ const state = {
       'active_topic_phase': '第一周',
       'active_start_time': '1479139200',
       'active_end_time': '1482163200',
+      'single_score': 10,
       'topic_answer': [{
         'topic_answer_id': 17,
         'topic_id': 21,
@@ -201,7 +206,7 @@ const getters = {
           rightAnswer.push(ans.topic_answer_id)
         }
       })
-      return {rightAnswer, singleScore: 20}
+      return {rightAnswer, singleScore: detail.single_score ? detail.single_score : 20}
     })
     return rightAnswerid
   }
