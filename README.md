@@ -1,27 +1,29 @@
 # get-answer
 
-> A Vue.js project
+该项目是本人开始学习 vuex 所写的例子。是根据 https://github.com/bailicangdu/vue2-happyfri 这个例子的 UI 来实现的。  
+在作者原来基础上新增了多选功能，对于单选功能实现方式也是有所不同的。
 
-## Build Setup
+## 使用技术
+
+Vue + Vuex + vue-router
+
+## 项目运行
 
 ``` bash
-# install dependencies
+# 下载依赖包
 npm install
 
-# serve with hot reload at localhost:8080
+# 开发环境 访问：localhost:8080
 npm run dev
 
-# build for production with minification
+# 生产环境
 npm run build
 
-# build for production and view the bundle analyzer report
+# 打包分析
 npm run build --report
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 题外话
 
-## change log
-2018-09-13:
-  -feature: 完成基本功能 - 单选题；有两个 app 这个id，返回后背景图片没有换
-2018-09-14:
-  -feature: 升级成多选题
+鄙人才浅，代码有许多不合理之处。若有热心人愿意赐教在下，欢迎 pr。  
+开发分支： beta
