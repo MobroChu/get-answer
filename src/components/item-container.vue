@@ -11,7 +11,7 @@
       </div>
       <div class="item-container item-container-item" v-if="fatherComponent === 'item'">
         <dl>
-          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p><span v-if="multiSelect">（多选）</span></dt>
+          <dt><i>{{itemNum}}. </i><p>{{itemDetail[itemNum-1].topic_name}}</p><span v-if="multiSelect">（多选）</span><span>【{{itemDetail[itemNum - 1].single_score}}分】</span></dt>
           <dd v-for="(item, index) in itemDetail[itemNum-1].topic_answer"
             :key="index"
             @click="choosed(item.topic_answer_id, index)"
