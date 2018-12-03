@@ -1,4 +1,14 @@
 npm-debug.log
-/dist/
-/node_modules/
+
 /**/.DS_Store
+.vscode
+node_modules/
+dist/
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
